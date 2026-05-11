@@ -1,0 +1,45 @@
+import { db } from "@/db";
+import { categoriesTable, transactionsTable } from "@/db/schema";
+import { auth } from "@clerk/nextjs/server";
+import { format } from "date-fns";
+import { and, desc, eq, gte, lte } from "drizzle-orm";
+import "server-only";
+
+export const getTransactionsByMonth = async ({ month, year }: { month: number, year: number }) => {
+   const { userId } = await auth();
+
+   if (!userId) {
+      return null;
+   }
+
+   const earliestDate = new Date(year, month - 1, 1);
+   //В JS месяца начинаются с 0 индекса, а month - месяц нормального вида (1-12)
+
+   const latestDate = new Date(year, month, 0);
+   //Нулевой элемент текущего месяца в JS вернет последний день предыдущего месяца
+
+   const transactions = await db
+      .select({
+         id: transactionsTable.id,
+         description: transactionsTable.description,
+         amount: transactionsTable.amount,
+         transactionDate: transactionsTable.transactionDate,
+         category: categoriesTable.name,
+         transactionType: categoriesTable.type
+      })
+      .from(transactionsTable)
+      .where(
+         and(
+            eq(transactionsTable.userId, userId),
+            gte(
+               transactionsTable.transactionDate,
+               format(earliestDate, "yyyy-MM-dd")
+            ),
+            lte(transactionsTable.transactionDate, format(latestDate, "yyyy-MM-dd"))
+         )
+      )
+      .orderBy(desc(transactionsTable.transactionDate))
+      .leftJoin(categoriesTable, eq(transactionsTable.categoryId, categoriesTable.id));
+
+   return transactions;
+}
