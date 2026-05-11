@@ -129,3 +129,13 @@
     font-family: var(--font-poppins);
   }
 }
+
+@keyframes skeleton-shimmer {
+  0% {
+    transform: translateX(-115%) skewX(-14deg);
+  }
+
+  100% {
+    transform: translateX(285%) skewX(-14deg);
+  }
+}

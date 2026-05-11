@@ -1,57 +1,38 @@
 import Image from "next/image";
-import PageContainer from "@/components/page-container";
+import { Show, SignInButton, SignUpButton } from "@clerk/nextjs";
+import { ChartColumnBigIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-export default function Home() {
-  return (
-    <PageContainer className="py-10 sm:py-16">
-      <div className="rounded-2xl border bg-card p-6 sm:p-10">
-        <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex flex-col gap-4">
-            <Image
-              className="dark:invert"
-              src="/next.svg"
-              alt="Next.js logo"
-              width={100}
-              height={20}
-              priority
-            />
-            <div className="space-y-2">
-              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
-                Welcome to NextCash
-              </h1>
-              <p className="max-w-xl text-sm sm:text-base text-muted-foreground">
-                The dashboard is now responsive for mobile and wide screens.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <a
-              className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] sm:w-auto"
-              href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Image
-                className="dark:invert"
-                src="/vercel.svg"
-                alt="Vercel logomark"
-                width={16}
-                height={16}
-              />
-              Deploy Now
-            </a>
-            <a
-              className="flex h-11 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] sm:w-auto"
-              href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Documentation
-            </a>
-          </div>
+function Home() {
+  return <main className="min-h-[400px] h-[calc(100vh-80px)] flex items-center justify-center bg-white relative">
+    <Image alt="Cover Image" src="/cover.webp" fill className="object-cover opacity-50" />
+    <div className="relarive z-10 text-center flex flex-col gap-4">
+      <h1 className="text-5xl font-bold flex gap-1 items-center justify-center">
+        <ChartColumnBigIcon className="text-lime-500" size={60} /> NextCash
+      </h1>
+      <p className="text-2xl">
+        Track your finances with ease
+      </p>
+      <Show when="signed-in">
+        <Button asChild size="lg">
+          <Link href="/dashboard">
+            Go To Your Dashboard
+          </Link>
+        </Button>
+      </Show>
+      <Show when="signed-out">
+        <div className="flex gap-2 items-center justify-center">
+          <Button asChild size="lg" className="bg-lime-600 hover:bg-lime-500">
+            <SignInButton />
+          </Button>
+          <Button asChild size="lg">
+            <SignUpButton />
+          </Button>
         </div>
-      </div>
-    </PageContainer>
-  );
+      </Show>
+    </div>
+  </main>;
 }
+
+export default Home;
